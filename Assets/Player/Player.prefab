@@ -54,7 +54,7 @@ MonoBehaviour:
   movementSpeed: 90
   sprintMultiplyer: 2
   movementSmoothing: 0.5
-  ground:
+  groundLayer:
     serializedVersion: 2
     m_Bits: 256
   rayCastLength: 1

@@ -7,7 +7,9 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     protected Rigidbody2D rB;
-    public float Health {protected set; get;} = 100;
+    [HideInInspector]
+    public float Health {set; get;} = 10;
+    [HideInInspector]
     public float attackDamage;
     protected GameManager gameManager;
 
@@ -15,7 +17,10 @@ public class Unit : MonoBehaviour
     {
         gameManager = FindObjectOfType<GameManager>();
         rB = GetComponent<Rigidbody2D>();
+        UnitAwake();
     }
+
+    protected virtual void UnitAwake() {}
 
     public Unit() {}
     

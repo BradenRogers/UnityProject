@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class Enemy_Slam : Enemy
 {
-    Enemy enemy = new Enemy(float.MaxValue, 25);
     [SerializeField] private LayerMask playerLayer = 1<<0;
     [SerializeField] private float rayCastLength = 5.0f;
     [SerializeField] private float resetTime = 5.0f;
     [SerializeField] private float returnSpeed = 0.01f;
     private Vector3 originalPosistion;
 
-    private void Awake()
+    protected override void UnitAwake()
     {
         rB = GetComponent<Rigidbody2D>();
         originalPosistion = transform.position;
+        unit = new Unit(float.MaxValue,50);
     }
     
     private void Update()

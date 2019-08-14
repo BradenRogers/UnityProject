@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
 
     public Player GetPlayer()
     {
+        Debug.Log(player);
         return player;
     }
 }

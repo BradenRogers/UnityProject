@@ -4,30 +4,24 @@ using UnityEngine;
 
 public class Enemy : Unit
 {
+    protected Unit unit;
     protected Player player;
-    Unit unit;
 
     [Header("Movements")]
     [SerializeField] protected float movementSpeed = 40.0f;
+    [Header("Attacks")]
+    [SerializeField] private float damage = 5;
 
-    public Enemy(float inHealth, float inDamage)
+    protected override void UnitAwake()
     {
-        unit = new Unit(inHealth, inDamage);
-    }
-
-    public Enemy() {}
-
-    private void Start()
-    {
-        //player = gameManager.GetPlayer();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player = gameManager.GetPlayer();
     }
 
     private void OnCollisionEnter2D(Collision2D otherCollider)
     {
         if(otherCollider.gameObject.tag == "Player")
         {
-            otherCollider.collider.GetComponent<Player>().ApplyDamage(100);
+            otherCollider.collider.GetComponent<Player>().ApplyDamage(unit.attackDamage);
         }
     }
 }

@@ -25,15 +25,18 @@ public class Player : Unit
     private float horizontalMovement = 0f;
 
     [Header("Ground Check")]
-    [SerializeField] private LayerMask ground = 1<<0;
+    [SerializeField] private LayerMask groundLayer = 1<<0;
     [SerializeField] private float rayCastLength = 5f;
+    
 
     /* Other */
     private bool isInIFrames = false;
 
     Player()
     {
-        unit = new Unit(100,100);
+        unit = new Unit(100,100) { 
+
+        };
     }
 
     void Start()
@@ -41,7 +44,7 @@ public class Player : Unit
         originalJumpForce = jumpForce;
     }
 
-    private void Awake()
+    protected override void UnitAwake()
     {
         SetComponents();
     }
@@ -57,8 +60,9 @@ public class Player : Unit
     {
         if(!isInIFrames)
         {
-            Health -= inDamage;
-            if(Health <= 0)
+            Debug.Log("Damage Taken: "+ inDamage);
+            unit.Health -= inDamage;
+            if(unit.Health <= 0)
             {
                 Death();
             }
@@ -80,7 +84,8 @@ public class Player : Unit
         float timeToWait = 0.2f;
 
         isInIFrames = true;
-        
+        gameObject.layer = LayerMask.NameToLayer("PlayerIFrame");
+
         spriteRend.color = transparent;
         yield return new WaitForSecondsRealtime(timeToWait);
         spriteRend.color = almostNormal;
@@ -93,6 +98,7 @@ public class Player : Unit
         yield return new WaitForSecondsRealtime(timeToWait);
         spriteRend.color = normal;
         
+        gameObject.layer = LayerMask.NameToLayer("Player");
         isInIFrames = false;
         yield break;
     }
@@ -110,12 +116,17 @@ public class Player : Unit
     //move this to another script
     private void Movement(float horAxis)
     {
-        Vector3 targetVelocity = new Vector2(horAxis * 10f, rB.velocity.y);
-		rB.velocity = Vector3.SmoothDamp(rB.velocity, targetVelocity, ref velocity, movementSmoothing);
-
-        float speed = rB.velocity.x;
+        if(horAxis > 0 || horAxis < 0)
+        {
+            Vector3 targetVelocity = new Vector2(horAxis * 10f, rB.velocity.y);
+		    rB.velocity = Vector3.SmoothDamp(rB.velocity, targetVelocity, ref velocity, movementSmoothing);
+        }
+        else
+        {
+            rB.velocity = new Vector2(0, rB.velocity.y);
+        }
         
-        anim.SetFloat("movementSpeed", Mathf.Abs(speed));
+        anim.SetFloat("movementSpeed", Mathf.Abs(rB.velocity.x));
 
         if(horAxis > 0)
         {
@@ -130,14 +141,14 @@ public class Player : Unit
         {
             if(Input.GetButton("Jump"))
             {
-                jumpForce = Mathf.Lerp(jumpForce, jumpForceMax, jumpIncrese);  
+                jumpForce = Mathf.LerpUnclamped(jumpForce, jumpForceMax, jumpIncrese);
+                anim.SetBool("isJumping", true);   
             }
 
             if(Input.GetButtonUp("Jump"))
             {   
                 rB.velocity = (Vector2.up * jumpForce);
                 jumpForce = originalJumpForce;
-                anim.SetBool("isJumping", true); 
                 isJumping = true;
             }
         }
@@ -148,7 +159,7 @@ public class Player : Unit
             anim.SetBool("isJumping", false);
             anim.SetBool("isLanding", true);
 
-            if(Physics2D.Raycast(transform.position, Vector2.down, rayCastLength, ground))
+            if(Physics2D.Raycast(transform.position, Vector2.down, rayCastLength, groundLayer))
             {
                 anim.SetBool("isLanding", false);
                 isJumping = false; 
