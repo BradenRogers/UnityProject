@@ -9,8 +9,6 @@ public class Enemy : Unit
 
     [Header("Movements")]
     [SerializeField] protected float movementSpeed = 40.0f;
-    [Header("Attacks")]
-    [SerializeField] private float damage = 5;
 
     protected override void UnitAwake()
     {

@@ -4,13 +4,25 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private static GameManager _instance;
+    public static GameManager Instance { get { return _instance; } }
+
     private GameObject playerSpawnPoint;
     [SerializeField] private GameObject playerPrefab = null;
     private Player player;
     [SerializeField] private bool disableSpawning = false;
 
     private void Awake()
-    {   
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        } 
+        else 
+        {
+            _instance = this;
+        }
+
         if(!disableSpawning)
         {
             playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawn");
@@ -26,7 +38,6 @@ public class GameManager : MonoBehaviour
 
     public Player GetPlayer()
     {
-        Debug.Log(player);
         return player;
     }
 }

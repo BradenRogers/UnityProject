@@ -12,8 +12,8 @@ public class Player : Unit
 
     /* Movements */
     [Header("Movements")]
-    [SerializeField] private float jumpForce = 400; 
-    [SerializeField] private float jumpForceMax = 450f;
+    public float jumpForce = 400; 
+    [SerializeField] public float jumpForceMax = 450f;
     [SerializeField] private float jumpIncrese = 0.01f;
     private float originalJumpForce;
     private bool isJumping = false;
@@ -28,7 +28,6 @@ public class Player : Unit
     [SerializeField] private LayerMask groundLayer = 1<<0;
     [SerializeField] private float rayCastLength = 5f;
     
-
     /* Other */
     private bool isInIFrames = false;
 
@@ -39,18 +38,14 @@ public class Player : Unit
         };
     }
 
-    void Start()
+    private void Start()
     {
-        originalJumpForce = jumpForce;
+        Health = unit.Health;
     }
 
     protected override void UnitAwake()
     {
-        SetComponents();
-    }
-
-    private void SetComponents()
-    {
+        originalJumpForce = jumpForce;
         rB = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         spriteRend = GetComponent<SpriteRenderer>();
@@ -60,8 +55,9 @@ public class Player : Unit
     {
         if(!isInIFrames)
         {
-            Debug.Log("Damage Taken: "+ inDamage);
             unit.Health -= inDamage;
+            Health = unit.Health;
+            Debug.Log("Damage Taken: " + inDamage + ". Health remaining: " + unit.Health);
             if(unit.Health <= 0)
             {
                 Death();
