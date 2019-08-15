@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : Unit
 {
-    Unit unit;
+    //Unit unit;
 
     /* Components */
     private Animator anim;
@@ -18,7 +18,6 @@ public class Player : Unit
     private float originalJumpForce;
     private bool isJumping = false;
     [SerializeField] private float movementSpeed = 40.0f;
-    [SerializeField] private float sprintMultiplyer = 2.0f;
 
     private Vector3 velocity = Vector3.zero;
     [Range(0,0.3f), SerializeField] private float movementSmoothing = 0.5f;
@@ -27,25 +26,31 @@ public class Player : Unit
     [Header("Ground Check")]
     [SerializeField] private LayerMask groundLayer = 1<<0;
     [SerializeField] private float rayCastLength = 5f;
+
+
+    /* Inventory */
+    [SerializeField] private Inventory inventory;
     
     /* Other */
     private bool isInIFrames = false;
+    private float maxHealth;
 
     Player()
     {
-        unit = new Unit(100,100) { 
-
-        };
+        //unit = new Unit(100,100);
     }
 
     private void Start()
     {
-        Health = unit.Health;
+        gameManager.GetUI().UpdateCoinUI(inventory.GetPickUpables().Count);
     }
 
     protected override void UnitAwake()
     {
         originalJumpForce = jumpForce;
+        maxHealth = health;
+
+        //Get Components
         rB = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         spriteRend = GetComponent<SpriteRenderer>();
@@ -53,12 +58,15 @@ public class Player : Unit
 
     public override void ApplyDamage(float inDamage)
     {
+        // I Frame handling
         if(!isInIFrames)
         {
-            unit.Health -= inDamage;
-            Health = unit.Health;
-            Debug.Log("Damage Taken: " + inDamage + ". Health remaining: " + unit.Health);
-            if(unit.Health <= 0)
+            // apply the damage and updates the UI
+            health -= inDamage;
+            gameManager.GetUI().UpdateHealthBar();
+            Debug.Log("Damage Taken: " + inDamage + ". Health remaining: " + health);
+
+            if(health <= 0)
             {
                 Death();
             }
@@ -66,7 +74,6 @@ public class Player : Unit
             {
                 StartCoroutine(TakeDamage());
             }
-        
         }
     }
 
@@ -79,9 +86,11 @@ public class Player : Unit
 
         float timeToWait = 0.2f;
 
+        // Puts player into IFrames
         isInIFrames = true;
         gameObject.layer = LayerMask.NameToLayer("PlayerIFrame");
 
+        // Flashes player to show damage
         spriteRend.color = transparent;
         yield return new WaitForSecondsRealtime(timeToWait);
         spriteRend.color = almostNormal;
@@ -94,6 +103,7 @@ public class Player : Unit
         yield return new WaitForSecondsRealtime(timeToWait);
         spriteRend.color = normal;
         
+        // Takes player out of IFrame
         gameObject.layer = LayerMask.NameToLayer("Player");
         isInIFrames = false;
         yield break;
@@ -109,9 +119,10 @@ public class Player : Unit
         horizontalMovement = Input.GetAxisRaw("Horizontal") * movementSpeed;
     }
 
-    //move this to another script
+    //move this to another script later
     private void Movement(float horAxis)
     {
+        // Player movements
         if(horAxis > 0 || horAxis < 0)
         {
             Vector3 targetVelocity = new Vector2(horAxis * 10f, rB.velocity.y);
@@ -119,11 +130,14 @@ public class Player : Unit
         }
         else
         {
+            // sets veleocity to 0 to stop player from slidding
             rB.velocity = new Vector2(0, rB.velocity.y);
         }
         
+        //Set animation value
         anim.SetFloat("movementSpeed", Mathf.Abs(rB.velocity.x));
 
+        //Flipping the sprite
         if(horAxis > 0)
         {
            spriteRend.flipX = false;
@@ -133,16 +147,22 @@ public class Player : Unit
             spriteRend.flipX = true;
         }
 
+        // Jump handling
         if(!isJumping)
         {
             if(Input.GetButton("Jump"))
             {
+                // increase jump force while holding jump
                 jumpForce = Mathf.LerpUnclamped(jumpForce, jumpForceMax, jumpIncrese);
                 anim.SetBool("isJumping", true);   
+                // Update UI
+                gameManager.GetUI().UpdateJumpBar();
             }
 
+            // using GetButtonUp might cause problems with not jumping when space is clicked
             if(Input.GetButtonUp("Jump"))
             {   
+                // jumps when space is let go off
                 rB.velocity = (Vector2.up * jumpForce);
                 jumpForce = originalJumpForce;
                 isJumping = true;
@@ -151,6 +171,7 @@ public class Player : Unit
         
         if(rB.velocity.y < 0 && isJumping)
         {
+            // smooths out the falling of a jump making a parabola
             rB.velocity += Vector2.up * Physics2D.gravity.y * (2.5f - 1) * Time.deltaTime;
             anim.SetBool("isJumping", false);
             anim.SetBool("isLanding", true);
@@ -159,7 +180,31 @@ public class Player : Unit
             {
                 anim.SetBool("isLanding", false);
                 isJumping = false; 
+                gameManager.GetUI().UpdateJumpBar();
             }
+        }
+    }
+
+    public void Heal(float inHealth)
+    {
+        // heals
+        health += inHealth;
+        if(health > maxHealth)
+        {
+            health = maxHealth;
+        }
+        // Update UI
+        gameManager.GetUI().UpdateHealthBar();
+    }
+
+    private void OnTriggerEnter2D(Collider2D otherCollider)
+    {
+        // item pickup
+        IInventoryItem item = otherCollider.gameObject.GetComponent<IInventoryItem>();
+        if(item != null)
+        {
+            inventory.AddItem(item);
+            gameManager.GetUI().UpdateCoinUI(inventory.GetPickUpables().Count);
         }
     }
 }

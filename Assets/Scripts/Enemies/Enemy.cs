@@ -19,6 +19,7 @@ public class Enemy : Unit
     {
         if(otherCollider.gameObject.tag == "Player")
         {
+            // Apply damage to player
             otherCollider.collider.GetComponent<Player>().ApplyDamage(unit.attackDamage);
         }
     }

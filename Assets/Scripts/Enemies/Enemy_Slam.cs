@@ -19,8 +19,10 @@ public class Enemy_Slam : Enemy
     
     private void Update()
     {
+        // checks if player is below him
         if(Physics2D.Raycast(transform.position, Vector2.down, rayCastLength, playerLayer))
         {
+            // Unlocks Y axis contstraint so he drops
             rB.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
             StartCoroutine(ResetTimer());
         }
@@ -29,12 +31,14 @@ public class Enemy_Slam : Enemy
     IEnumerator ResetTimer()
     {
         yield return new WaitForSecondsRealtime(resetTime);
+        // relocks y axis
         rB.constraints |= RigidbodyConstraints2D.FreezePositionY;
+
         float distance = Vector3.Distance(originalPosistion, transform.position);
-        //checks to see if it is at its original posistion with  a little margin for errors
+        //checks to see if it is at its original posistion with a little margin for errors
         while(distance > 0.01f)
         {
-            
+            // move back to original posistion
             distance = Vector3.Distance(originalPosistion, transform.position);
             float y = Mathf.LerpUnclamped(transform.position.y, originalPosistion.y, returnSpeed * Time.deltaTime);
             transform.position = new Vector3(originalPosistion.x, y, originalPosistion.z);

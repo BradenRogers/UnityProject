@@ -7,9 +7,9 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     protected Rigidbody2D rB;
-    [HideInInspector]
-    public float Health {set; get;} = 10;
-    [HideInInspector]
+    
+    public float health = 10;
+
     public float attackDamage;
     protected GameManager gameManager;
 
@@ -26,14 +26,14 @@ public class Unit : MonoBehaviour
     
     public Unit(float inHealth, float inAttackDamage)
     {
-        Health = inHealth;
+        health = inHealth;
         attackDamage = inAttackDamage;
     }
 
     public virtual void ApplyDamage(float inDamage)
     {
-        Health -= inDamage;
-        if(Health <= 0)
+        health -= inDamage;
+        if(health <= 0)
         {
             Death();
         }

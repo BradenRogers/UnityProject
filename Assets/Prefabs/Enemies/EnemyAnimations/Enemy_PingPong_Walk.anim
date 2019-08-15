@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Enemy_WalkFoward_Walk
+  m_Name: Enemy_PingPong_Walk
   serializedVersion: 6
   m_Legacy: 0
   m_Compressed: 0
@@ -20,13 +20,13 @@ AnimationClip:
   m_PPtrCurves:
   - curve:
     - time: 0
-      value: {fileID: 21300000, guid: 5f4f6b901cbbf404a9d9ad304c057e15, type: 3}
+      value: {fileID: 21300000, guid: a8cad17bac36b404c97f57215d3b4f64, type: 3}
     - time: 0.016666668
-      value: {fileID: 21300000, guid: 02a277859bcf447dd90b0dffe2c04ed8, type: 3}
+      value: {fileID: 21300000, guid: d6b950bb161d3438ba75e8de6eb31c84, type: 3}
     - time: 0.033333335
-      value: {fileID: 21300000, guid: 70130af32532446e295984959935c374, type: 3}
+      value: {fileID: 21300000, guid: 27a12e4018c414c0298ea5e3f179750e, type: 3}
     - time: 0.05
-      value: {fileID: 21300000, guid: 613eddfbc284b48adbcb7691e72f1aec, type: 3}
+      value: {fileID: 21300000, guid: 1ddc1e7e0ddc64d6eb7edc49eecaacc1, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -46,10 +46,10 @@ AnimationClip:
       customType: 23
       isPPtrCurve: 1
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 5f4f6b901cbbf404a9d9ad304c057e15, type: 3}
-    - {fileID: 21300000, guid: 02a277859bcf447dd90b0dffe2c04ed8, type: 3}
-    - {fileID: 21300000, guid: 70130af32532446e295984959935c374, type: 3}
-    - {fileID: 21300000, guid: 613eddfbc284b48adbcb7691e72f1aec, type: 3}
+    - {fileID: 21300000, guid: a8cad17bac36b404c97f57215d3b4f64, type: 3}
+    - {fileID: 21300000, guid: d6b950bb161d3438ba75e8de6eb31c84, type: 3}
+    - {fileID: 21300000, guid: 27a12e4018c414c0298ea5e3f179750e, type: 3}
+    - {fileID: 21300000, guid: 1ddc1e7e0ddc64d6eb7edc49eecaacc1, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

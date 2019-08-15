@@ -15,9 +15,8 @@ public class Enemy_WalkForward : Enemy
 
     private void FixedUpdate()
     {
-        float test = -1 * movementSpeed;
-        test = test * Time.fixedDeltaTime;
-        Vector3 targetVelocity = new Vector2(test * 10f, rB.velocity.y);
+        // Movement Handling
+        Vector3 targetVelocity = new Vector2(((-1 * movementSpeed) * Time.deltaTime) * 10f, rB.velocity.y);
 		rB.velocity = Vector3.SmoothDamp(rB.velocity, targetVelocity, ref velocity, movementSmoothing);
     }
 }
