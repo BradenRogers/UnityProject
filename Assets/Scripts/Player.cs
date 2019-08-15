@@ -111,12 +111,13 @@ public class Player : Unit
 
     private void FixedUpdate()
     {
-        Movement(horizontalMovement * Time.fixedDeltaTime);
+        // Movement(horizontalMovement * Time.fixedDeltaTime); moved to update becuase jump doesnt always work in fixed update
     }
 
     private void Update()
     {   
         horizontalMovement = Input.GetAxisRaw("Horizontal") * movementSpeed;
+        Movement(horizontalMovement * Time.fixedDeltaTime);
     }
 
     //move this to another script later
@@ -150,7 +151,14 @@ public class Player : Unit
         // Jump handling
         if(!isJumping)
         {
-            if(Input.GetButton("Jump"))
+            if(Input.GetButtonUp("Jump")) // using GetButtonUp might cause problems with not jumping when space is clicked
+            {   
+                // jumps when space is let go off
+                rB.velocity = (Vector2.up * jumpForce);
+                jumpForce = originalJumpForce;
+                isJumping = true;
+            }
+            else if(Input.GetButton("Jump"))
             {
                 // increase jump force while holding jump
                 jumpForce = Mathf.LerpUnclamped(jumpForce, jumpForceMax, jumpIncrese);
@@ -159,14 +167,7 @@ public class Player : Unit
                 gameManager.GetUI().UpdateJumpBar();
             }
 
-            // using GetButtonUp might cause problems with not jumping when space is clicked
-            if(Input.GetButtonUp("Jump"))
-            {   
-                // jumps when space is let go off
-                rB.velocity = (Vector2.up * jumpForce);
-                jumpForce = originalJumpForce;
-                isJumping = true;
-            }
+            
         }
         
         if(rB.velocity.y < 0 && isJumping)
